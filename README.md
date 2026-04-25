@@ -87,6 +87,9 @@ SportBook adalah aplikasi berbasis web untuk melakukan pemesanan lapangan olahra
 ### Halaman Kelola Lapangan
 ![Kelola Lapangan](public/screenshots/admin_lapangan.png)
 
+### Halaman Kelola Booking (Admin)
+![Kelola Booking](public/screenshots/admin_booking.png)
+
 ## 💡 Penjelasan Solusi Tantangan (Paket 5)
 
 Proyek ini mengatasi beberapa tantangan teknis khusus untuk ujian CPMK02:
