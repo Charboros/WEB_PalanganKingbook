@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 #[Fillable(['booking_id', 'field_id', 'slot_date', 'slot_hour', 'price'])]
 class BookingSlot extends Model
 {
+    public $timestamps = false;
+
     protected function casts(): array
     {
         return [

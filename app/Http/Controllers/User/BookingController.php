@@ -105,8 +105,6 @@ class BookingController extends Controller
 
             foreach ($slotDetails as &$detail) {
                 $detail['booking_id'] = $booking->id;
-                $detail['created_at'] = now();
-                $detail['updated_at'] = now();
             }
 
             BookingSlot::insert($slotDetails);
