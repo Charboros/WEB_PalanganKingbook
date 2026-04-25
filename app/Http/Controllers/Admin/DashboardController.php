@@ -20,7 +20,9 @@ class DashboardController extends Controller
         $totalBookings = Booking::count();
 
         // Calendar data
-        $bookings = Booking::with(['field', 'user'])->get();
+        $bookings = Booking::whereNotIn('status', ['dibatalkan', 'refund'])
+            ->with(['field', 'user'])
+            ->get();
         $calendarEvents = $bookings->map(function ($booking) {
             return [
                 'title' => $booking->field->name . ' - ' . $booking->user->name,
