@@ -71,10 +71,42 @@ SportBook adalah aplikasi berbasis web untuk melakukan pemesanan lapangan olahra
 - **Password:** `12345678`
 
 ## 📸 Screenshot Aplikasi
-*(Tambahkan Screenshot Aplikasi Di Sini)*
-- Halaman Home/Katalog Lapangan
-- Halaman Form Booking (Grid Waktu)
-- Halaman Dashboard Admin
+
+### Halaman Home/Katalog Lapangan
+![Katalog Lapangan](public/screenshots/katalog.png)
+
+### Halaman Riwayat Booking (User)
+![Riwayat Booking](public/screenshots/riwayat.png)
+
+### Halaman Dashboard Admin (Kalender)
+![Dashboard Admin](public/screenshots/admin_kalender.png)
+
+### Halaman Kelola Jenis Lapangan
+![Kelola Jenis Lapangan](public/screenshots/admin_jenis.png)
+
+### Halaman Kelola Lapangan
+![Kelola Lapangan](public/screenshots/admin_lapangan.png)
+
+## 💡 Penjelasan Solusi Tantangan (Paket 5)
+
+Proyek ini mengatasi beberapa tantangan teknis khusus untuk ujian CPMK02:
+
+### 1. Mencegah Double-Booking (Race Condition)
+Diimplementasikan menggunakan **Unique Constraint Database** langsung di MySQL. Ini menjamin pencegahan mutlak meskipun ada *race-condition* saat dua pengguna memesan di detik yang sama.
+- **File:** `database/migrations/2026_04_25_001617_create_booking_slots_table.php` (`uk_slot`)
+- **File:** `app/Http/Controllers/User/BookingController.php` (Menggunakan `DB::beginTransaction()` dan menangkap *error code* 23000).
+
+### 2. Validasi Slot Jam Kontinu (Berurutan)
+Sistem menolak booking jam yang terputus (misal: jam 08:00 dan jam 12:00 sekaligus).
+- **File:** `app/Http/Controllers/User/BookingController.php` (Terdapat loop perhitungan matematis selisih antar slot di fungsi `store`).
+
+### 3. Harga Dinamis (Peak Hour & Weekend)
+Otomatis mendeteksi jika hari ini akhir pekan (+20% harga) dan jika jam yang dipesan masuk *Peak Hour* 17:00-22:00 (harga naik 1.5x).
+- **File:** `app/Http/Controllers/User/BookingController.php` (Fungsi `store`).
+
+### 4. Logika Refund Bertingkat
+Menggunakan fitur manipulasi waktu `Carbon` untuk mengkalkulasi selisih jam dari waktu pembatalan hingga jadwal main (>= 24 jam kembali 100%, 12-24 jam kembali 50%, <12 jam kembali 0%).
+- **File:** `app/Http/Controllers/User/BookingController.php` (Fungsi `cancel` menggunakan `now()->diffInHours($bookingDateTime)`).
 
 ## 📺 Tautan Video Demo YouTube
 [LINK_VIDEO_YOUTUBE_ANDA]
