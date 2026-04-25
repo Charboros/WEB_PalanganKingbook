@@ -70,7 +70,7 @@
                                             <a href="{{ Storage::url($booking->payment_proof) }}" target="_blank" class="text-blue-600 hover:underline text-xs">Lihat Bukti</a>
                                         @endif
 
-                                        @if(!in_array($booking->status, ['dibatalkan', 'refund']) && \Carbon\Carbon::parse($booking->booking_date . ' ' . $booking->start_time)->isFuture())
+                                        @if(!in_array($booking->status, ['dibatalkan', 'refund']) && \Carbon\Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->start_time->format('H:i:s'))->isFuture())
                                             <form action="{{ route('user.bookings.cancel', $booking) }}" method="POST" onsubmit="return confirm('Yakin ingin membatalkan booking ini? Kebijakan refund berlaku (>=24 jam: 100%, 12-24 jam: 50%, <12 jam: 0%).');">
                                                 @csrf
                                                 <button type="submit" class="text-red-600 hover:text-red-900 text-xs underline">Batalkan</button>

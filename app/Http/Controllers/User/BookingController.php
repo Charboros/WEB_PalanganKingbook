@@ -155,7 +155,7 @@ class BookingController extends Controller
             return back()->with('error', 'Booking ini sudah dibatalkan sebelumnya.');
         }
 
-        $bookingDateTime = Carbon::parse($booking->booking_date . ' ' . $booking->start_time);
+        $bookingDateTime = Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->start_time->format('H:i:s'));
         
         if ($bookingDateTime->isPast()) {
             return back()->with('error', 'Booking di masa lalu tidak dapat dibatalkan.');
