@@ -3,63 +3,47 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\FieldType;
 use Illuminate\Http\Request;
 
 class FieldTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $fieldTypes = FieldType::paginate(10);
+        return view('admin.field_types.index', compact('fieldTypes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('admin.field_types.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate(['name' => 'required|string|max:50|unique:field_types']);
+        FieldType::create($request->all());
+        return redirect()->route('admin.field-types.index')->with('success', 'Jenis lapangan berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(FieldType $fieldType)
     {
-        //
+        return view('admin.field_types.edit', compact('fieldType'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, FieldType $fieldType)
     {
-        //
+        $request->validate(['name' => 'required|string|max:50|unique:field_types,name,' . $fieldType->id]);
+        $fieldType->update($request->all());
+        return redirect()->route('admin.field-types.index')->with('success', 'Jenis lapangan berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(FieldType $fieldType)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($fieldType->fields()->count() > 0) {
+            return back()->with('error', 'Tidak dapat menghapus jenis lapangan karena masih memiliki lapangan.');
+        }
+        $fieldType->delete();
+        return redirect()->route('admin.field-types.index')->with('success', 'Jenis lapangan berhasil dihapus.');
     }
 }

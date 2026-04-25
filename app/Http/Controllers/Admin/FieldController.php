@@ -3,63 +3,91 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Field;
+use App\Models\FieldType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FieldController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $fields = Field::with('fieldType')->paginate(10);
+        return view('admin.fields.index', compact('fields'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $fieldTypes = FieldType::all();
+        return view('admin.fields.create', compact('fieldTypes'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'field_type_id' => 'required|exists:field_types,id',
+            'name' => 'required|string|max:50',
+            'price_offpeak' => 'required|numeric|min:0',
+            'price_peak' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'is_active' => 'boolean',
+        ]);
+
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
+
+        if ($request->hasFile('photo')) {
+            $data['photo'] = $request->file('photo')->store('fields', 'public');
+        }
+
+        Field::create($data);
+        return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Field $field)
     {
-        //
+        $fieldTypes = FieldType::all();
+        return view('admin.fields.edit', compact('field', 'fieldTypes'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Field $field)
     {
-        //
+        $request->validate([
+            'field_type_id' => 'required|exists:field_types,id',
+            'name' => 'required|string|max:50',
+            'price_offpeak' => 'required|numeric|min:0',
+            'price_peak' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'is_active' => 'boolean',
+        ]);
+
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
+
+        if ($request->hasFile('photo')) {
+            if ($field->photo) {
+                Storage::disk('public')->delete($field->photo);
+            }
+            $data['photo'] = $request->file('photo')->store('fields', 'public');
+        }
+
+        $field->update($data);
+        return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Field $field)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($field->bookings()->count() > 0) {
+            return back()->with('error', 'Tidak dapat menghapus lapangan karena sudah memiliki riwayat booking.');
+        }
+        
+        if ($field->photo) {
+            Storage::disk('public')->delete($field->photo);
+        }
+        
+        $field->delete();
+        return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil dihapus.');
     }
 }
