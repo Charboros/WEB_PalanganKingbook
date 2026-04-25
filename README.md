@@ -1,58 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Reservasi Lapangan Olahraga (SportBook)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Proyek Ujian Akhir CPMK02 Pemrograman Web II - Paket 5**
 
-## About Laravel
+**NIM:** H1D024085  
+**Nama Mahasiswa:** [NAMA_ANDA]  
+**Paket:** Paket 5 (Sistem Reservasi Lapangan Olahraga)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📖 Deskripsi Proyek
+SportBook adalah aplikasi berbasis web untuk melakukan pemesanan lapangan olahraga secara online. Sistem ini dirancang untuk mengatasi masalah *double-booking* dan memberikan kemudahan bagi pengguna dalam memilih waktu serta melihat ketersediaan lapangan secara *real-time*.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Fitur Utama
+1. **Autentikasi & Otorisasi:** Login dan registrasi terpisah antara Admin dan User (menggunakan Laravel Breeze).
+2. **Manajemen Lapangan (Admin):** CRUD Jenis Lapangan (Futsal, Badminton, Basket) dan Lapangan.
+3. **Katalog Lapangan (User):** Menampilkan daftar lapangan beserta filter dan detail harga.
+4. **Booking & Deteksi Konflik (User):** Memilih jadwal kosong, sistem secara otomatis akan mencegah *double-booking* menggunakan deteksi konflik *real-time* di tingkat database (*unique constraint*).
+5. **Harga Dinamis:** Kalkulasi harga otomatis untuk *Peak Hour* (17:00-22:00 = 1.5x lipat) dan *Weekend* (+20%).
+6. **Validasi Multi-Slot Kontinu:** Memastikan pengguna memilih jam yang berurutan dalam satu kali sesi booking.
+7. **Pembatalan & Kalkulasi Refund:** Pengguna dapat membatalkan pesanan. Dana akan dikalkulasi sesuai syarat (100% jika >= 24 jam, 50% jika 12-24 jam, 0% jika < 12 jam).
+8. **Dashboard Admin:** Menampilkan kalender booking interaktif dan pendapatan hari ini.
+9. **Laporan & Export (Admin):** Export rekapitulasi pendapatan ke format PDF.
 
-## Learning Laravel
+## 🛠️ Tech Stack
+- **Framework:** Laravel 13 (PHP 8.2+)
+- **Database:** MySQL 8.0+
+- **Frontend:** Laravel Blade, Tailwind CSS
+- **Library Tambahan:** `barryvdh/laravel-dompdf` (Laporan PDF)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Cara Menjalankan Proyek (Instalasi)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clone repository ini:
+   ```bash
+   git clone https://github.com/Charboros/pemweb2-paket5-H1D024085.git
+   cd pemweb2-paket5-H1D024085
+   ```
+2. Install dependensi PHP & Node.js:
+   ```bash
+   composer install
+   npm install
+   npm run build
+   ```
+3. Salin file `.env.example` ke `.env` dan atur konfigurasi database MySQL:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Buat database di MySQL (misalnya `sportbook`), kemudian jalankan migrasi beserta seeder:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+5. Tautkan storage agar foto lapangan dapat diakses:
+   ```bash
+   php artisan storage:link
+   ```
+6. Jalankan server lokal:
+   ```bash
+   php artisan serve
+   ```
+   Aplikasi dapat diakses di: `http://localhost:8000`
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 🔐 Kredensial Default (Seeder)
 
-## Agentic Development
+### Admin:
+- **Email:** `admin@admin.com`
+- **Password:** `password`
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### User Biasa:
+- **Email:** `user@user.com`
+- **Password:** `password`
 
-```bash
-composer require laravel/boost --dev
+## 📸 Screenshot Aplikasi
+*(Tambahkan Screenshot Aplikasi Di Sini)*
+- Halaman Home/Katalog Lapangan
+- Halaman Form Booking (Grid Waktu)
+- Halaman Dashboard Admin
 
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📺 Tautan Video Demo YouTube
+[LINK_VIDEO_YOUTUBE_ANDA]
