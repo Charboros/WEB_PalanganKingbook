@@ -3,7 +3,7 @@
 **Proyek Ujian Akhir CPMK02 Pemrograman Web II - Paket 5**
 
 **NIM:** H1D024085  
-**Nama Mahasiswa:** [NAMA_ANDA]  
+**Nama Mahasiswa:** Afkar Aufaa Farros  
 **Paket:** Paket 5 (Sistem Reservasi Lapangan Olahraga)
 
 ---
@@ -64,11 +64,11 @@ SportBook adalah aplikasi berbasis web untuk melakukan pemesanan lapangan olahra
 
 ### Admin:
 - **Email:** `admin@admin.com`
-- **Password:** `password`
+- **Password:** `12345678`
 
 ### User Biasa:
 - **Email:** `user@user.com`
-- **Password:** `password`
+- **Password:** `12345678`
 
 ## 📸 Screenshot Aplikasi
 *(Tambahkan Screenshot Aplikasi Di Sini)*
