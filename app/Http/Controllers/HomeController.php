@@ -10,6 +10,10 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        if (auth()->check() && auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
         $query = Field::with('fieldType')->where('is_active', true);
 
         if ($request->filled('field_type_id')) {

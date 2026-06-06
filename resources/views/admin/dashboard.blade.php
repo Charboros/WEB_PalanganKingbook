@@ -3,20 +3,20 @@
 @section('header', 'Dashboard')
 
 @section('content')
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
-            <h3 class="text-gray-500 text-sm font-medium">Pendapatan Hari Ini</h3>
-            <p class="text-3xl font-bold text-gray-800 mt-2">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-green-600">
+            <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wider">Pendapatan Hari Ini</h3>
+            <p class="text-3xl font-extrabold text-gray-800 mt-2">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
-            <h3 class="text-gray-500 text-sm font-medium">Total Booking</h3>
-            <p class="text-3xl font-bold text-gray-800 mt-2">{{ $totalBookings }}</p>
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 border-l-4 border-l-emerald-600">
+            <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wider">Total Booking</h3>
+            <p class="text-3xl font-extrabold text-gray-800 mt-2">{{ $totalBookings }}</p>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-800">Kalender Booking</h3>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+            <h3 class="text-lg font-bold text-gray-800">Kalender Booking</h3>
         </div>
         <div class="p-6">
             <div id="calendar"></div>
