@@ -64,7 +64,7 @@ class BookingController extends Controller
         $carbonDate = Carbon::parse($request->booking_date);
         $isWeekend = $carbonDate->isWeekend();
 
-        $totalPrice = 0;
+        $originalPrice = 0;
         $slotDetails = [];
 
         foreach ($slots as $hour) {
@@ -76,7 +76,7 @@ class BookingController extends Controller
             // Weekend calculation (+20%)
             $price = $isWeekend ? $basePrice * 1.2 : $basePrice;
 
-            $totalPrice += $price;
+            $originalPrice += $price;
             $slotDetails[] = [
                 'field_id' => $field->id,
                 'slot_date' => $request->booking_date,
@@ -84,6 +84,21 @@ class BookingController extends Controller
                 'price' => $price,
             ];
         }
+
+        // Calculate discount based on membership tier
+        $discountPercentage = 0;
+        $user = auth()->user();
+        if ($user && $user->isMember()) {
+            $tier = $user->member->tier;
+            if ($tier === 'silver') {
+                $discountPercentage = 0.10; // 10%
+            } elseif ($tier === 'gold') {
+                $discountPercentage = 0.20; // 20%
+            }
+        }
+
+        $discountAmount = $originalPrice * $discountPercentage;
+        $totalPrice = $originalPrice - $discountAmount;
 
         $startTime = sprintf('%02d:00:00', $slots[0]);
         $endTime = sprintf('%02d:00:00', end($slots) + 1);
@@ -93,12 +108,14 @@ class BookingController extends Controller
 
             $booking = Booking::create([
                 'booking_code' => 'BKG' . strtoupper(Str::random(6)) . time(),
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'field_id' => $field->id,
                 'booking_date' => $request->booking_date,
                 'start_time' => $startTime,
                 'end_time' => $endTime,
                 'duration_hours' => count($slots),
+                'original_price' => $originalPrice,
+                'discount_amount' => $discountAmount,
                 'total_price' => $totalPrice,
                 'status' => 'menunggu_pembayaran',
             ]);

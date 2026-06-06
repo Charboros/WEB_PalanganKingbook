@@ -35,6 +35,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/bookings', [UserBookingController::class, 'index'])->name('bookings.index');
         Route::post('/bookings/{booking}/payment', [UserBookingController::class, 'uploadPayment'])->name('bookings.payment');
         Route::post('/bookings/{booking}/cancel', [UserBookingController::class, 'cancel'])->name('bookings.cancel');
+        
+        // Membership Routes
+        Route::get('/membership', [\App\Http\Controllers\User\MembershipController::class, 'index'])->name('membership');
+        Route::post('/membership/activate', [\App\Http\Controllers\User\MembershipController::class, 'activate'])->name('membership.activate');
     });
 
     // Admin Routes
@@ -46,6 +50,11 @@ Route::middleware('auth')->group(function () {
         Route::patch('/bookings/{booking}/status', [AdminBookingController::class, 'updateStatus'])->name('bookings.updateStatus');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export', [ReportController::class, 'exportPdf'])->name('reports.export');
+        
+        // Members Management Routes
+        Route::get('/members', [\App\Http\Controllers\Admin\MemberController::class, 'index'])->name('members.index');
+        Route::get('/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'show'])->name('members.show');
+        Route::post('/members/{member}/adjust-xp', [\App\Http\Controllers\Admin\MemberController::class, 'adjustXP'])->name('members.adjust-xp');
     });
 });
 

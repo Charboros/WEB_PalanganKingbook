@@ -33,10 +33,28 @@ class BookingController extends Controller
             'status' => 'required|in:menunggu_pembayaran,terkonfirmasi,dibatalkan,selesai,refund',
         ]);
 
-        $booking->update(['status' => $request->status]);
+        $newStatus = $request->status;
+        $booking->update(['status' => $newStatus]);
 
-        if (in_array($request->status, ['dibatalkan', 'refund'])) {
+        if (in_array($newStatus, ['dibatalkan', 'refund'])) {
             $booking->bookingSlots()->delete();
+        }
+
+        // XP Awarding Logic
+        $user = $booking->user;
+        if ($user && $user->isMember()) {
+            $xpAmount = 10 * $booking->duration_hours;
+            
+            // Award XP if status changes to confirmed or completed and not yet awarded
+            if (in_array($newStatus, ['terkonfirmasi', 'selesai']) && !$booking->xp_awarded) {
+                $user->member->addXP($xpAmount, "Mendapat XP dari Booking {$booking->booking_code}", $booking->id);
+                $booking->update(['xp_awarded' => true]);
+            }
+            // Revoke XP if status changes to canceled, refund, or waiting payment and XP was awarded
+            elseif (in_array($newStatus, ['dibatalkan', 'refund', 'menunggu_pembayaran']) && $booking->xp_awarded) {
+                $user->member->subtractXP($xpAmount, "Pengurangan XP karena Pembatalan/Perubahan status Booking {$booking->booking_code}", $booking->id);
+                $booking->update(['xp_awarded' => false]);
+            }
         }
 
         return back()->with('success', 'Status booking berhasil diubah.');

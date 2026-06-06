@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'SportBook') }} - Admin</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-100 flex h-screen overflow-hidden">
+<body class="font-['Plus_Jakarta_Sans',_sans-serif] antialiased bg-gray-100 flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <aside class="w-64 bg-green-800 text-white flex flex-col">
         <div class="h-16 flex items-center justify-center border-b border-green-700">
@@ -18,6 +22,7 @@
             <a href="{{ route('admin.field-types.index') }}" class="block px-4 py-2 rounded transition-colors {{ request()->routeIs('admin.field-types.*') ? 'bg-green-700' : 'hover:bg-green-700' }}">Jenis Lapangan</a>
             <a href="{{ route('admin.fields.index') }}" class="block px-4 py-2 rounded transition-colors {{ request()->routeIs('admin.fields.*') ? 'bg-green-700' : 'hover:bg-green-700' }}">Lapangan</a>
             <a href="{{ route('admin.bookings.index') }}" class="block px-4 py-2 rounded transition-colors {{ request()->routeIs('admin.bookings.*') ? 'bg-green-700' : 'hover:bg-green-700' }}">Bookings</a>
+            <a href="{{ route('admin.members.index') }}" class="block px-4 py-2 rounded transition-colors {{ request()->routeIs('admin.members.*') ? 'bg-green-700' : 'hover:bg-green-700' }}">Kelola Member</a>
             <a href="{{ route('admin.reports.index') }}" class="block px-4 py-2 rounded transition-colors {{ request()->routeIs('admin.reports.*') ? 'bg-green-700' : 'hover:bg-green-700' }}">Laporan</a>
         </nav>
         <div class="p-4 border-t border-green-700">
