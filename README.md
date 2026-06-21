@@ -1,10 +1,9 @@
 # Sistem Reservasi Lapangan Olahraga (SportBook)
 
-**Proyek Ujian Akhir CPMK02 Pemrograman Web II - Paket 5**
+**SportBook – Sistem Reservasi Lapangan Olahraga**
 
-**NIM:** H1D024085  
-**Nama Mahasiswa:** Afkar Aufaa Farros  
-**Paket:** Paket 5 (Sistem Reservasi Lapangan Olahraga)
+**Author:** Afkar Aufaa Farros
+
 
 ---
 
