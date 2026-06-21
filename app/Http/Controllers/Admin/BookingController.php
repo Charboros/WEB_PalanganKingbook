@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use Illuminate\Http\Request;
 use App\Notifications\BookingStatusUpdated;
+use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
@@ -14,10 +14,10 @@ class BookingController extends Controller
         $query = Booking::with(['user', 'field']);
 
         if ($request->filled('search')) {
-            $query->where('booking_code', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('user', function($q) use ($request) {
-                      $q->where('name', 'like', '%' . $request->search . '%');
-                  });
+            $query->where('booking_code', 'like', '%'.$request->search.'%')
+                ->orWhereHas('user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%'.$request->search.'%');
+                });
         }
 
         if ($request->filled('status')) {
@@ -25,9 +25,19 @@ class BookingController extends Controller
         }
 
         $bookings = $query->orderBy('created_at', 'desc')->paginate(15);
+
         return view('admin.bookings.index', compact('bookings'));
     }
 
+    /**
+     * Memperbarui status pesanan dari panel Admin.
+     * Mengelola pelepasan slot lapangan jika dibatalkan, pembagian/penarikan Experience Points (XP)
+     * untuk sistem Membership, serta pengiriman notifikasi ke web pengguna (lonceng notifikasi).
+     * 
+     * @param Request $request Data status baru
+     * @param Booking $booking Objek pesanan yang sedang diubah
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function updateStatus(Request $request, Booking $booking)
     {
         $request->validate([
@@ -45,9 +55,9 @@ class BookingController extends Controller
         $user = $booking->user;
         if ($user && $user->isMember()) {
             $xpAmount = 10 * $booking->duration_hours;
-            
+
             // Award XP if status changes to confirmed or completed and not yet awarded
-            if (in_array($newStatus, ['terkonfirmasi', 'selesai']) && !$booking->xp_awarded) {
+            if (in_array($newStatus, ['terkonfirmasi', 'selesai']) && ! $booking->xp_awarded) {
                 $user->member->addXP($xpAmount, "Mendapat XP dari Booking {$booking->booking_code}", $booking->id);
                 $booking->update(['xp_awarded' => true]);
             }

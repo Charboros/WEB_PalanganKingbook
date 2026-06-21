@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\BookingSlot;
 use App\Models\Field;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,7 @@ class BookingController extends Controller
             ->where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-            
+
         return view('user.bookings.index', compact('bookings'));
     }
 
@@ -28,17 +29,26 @@ class BookingController extends Controller
     {
         $date = $request->input('date', Carbon::today()->format('Y-m-d'));
         $carbonDate = Carbon::parse($date);
-        
+
         $bookedSlots = BookingSlot::where('field_id', $field->id)
             ->where('slot_date', $date)
             ->pluck('slot_hour')
             ->toArray();
-            
+
         $isWeekend = $carbonDate->isWeekend();
 
         return view('user.fields.show', compact('field', 'date', 'bookedSlots', 'isWeekend'));
     }
 
+    /**
+     * Menyimpan data pemesanan (booking) lapangan baru.
+     * Mengatur validasi jam berurutan, harga peak/off-peak, akhir pekan,
+     * serta fitur diskon otomatis dari tingkatan (tier) membership.
+     * 
+     * @param Request $request Data request yang dikirimkan dari form pemesanan
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\QueryException Jika terjadi bentrok jam (double booking)
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -70,9 +80,9 @@ class BookingController extends Controller
         foreach ($slots as $hour) {
             // Check peak hour (17:00 - 22:00)
             $isPeak = ($hour >= 17 && $hour <= 22);
-            
+
             $basePrice = $isPeak ? $field->price_peak : $field->price_offpeak;
-            
+
             // Weekend calculation (+20%)
             $price = $isWeekend ? $basePrice * 1.2 : $basePrice;
 
@@ -107,7 +117,7 @@ class BookingController extends Controller
             DB::beginTransaction();
 
             $booking = Booking::create([
-                'booking_code' => 'BKG' . strtoupper(Str::random(6)) . time(),
+                'booking_code' => 'BKG'.strtoupper(Str::random(6)).time(),
                 'user_id' => $user->id,
                 'field_id' => $field->id,
                 'booking_date' => $request->booking_date,
@@ -129,8 +139,8 @@ class BookingController extends Controller
             DB::commit();
 
             return redirect()->route('user.bookings.index')->with('success', 'Booking berhasil dibuat. Silakan upload bukti pembayaran.');
-            
-        } catch (\Illuminate\Database\QueryException $e) {
+
+        } catch (QueryException $e) {
             DB::rollBack();
             // Code 23000 is integrity constraint violation (Unique Key uk_slot failed)
             if ($e->getCode() == 23000) {
@@ -140,10 +150,19 @@ class BookingController extends Controller
         }
     }
 
+    /**
+     * Mengunggah file bukti pembayaran untuk suatu pesanan.
+     * 
+     * @param Request $request Data file upload
+     * @param Booking $booking Objek pesanan yang bersangkutan
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function uploadPayment(Request $request, Booking $booking)
     {
-        if ($booking->user_id !== auth()->id()) abort(403);
-        
+        if ($booking->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $request->validate([
             'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:500',
         ]);
@@ -152,7 +171,7 @@ class BookingController extends Controller
             if ($booking->payment_proof) {
                 Storage::disk('public')->delete($booking->payment_proof);
             }
-            
+
             $path = $request->file('payment_proof')->store('payments', 'public');
             $booking->update([
                 'payment_proof' => $path,
@@ -164,28 +183,41 @@ class BookingController extends Controller
         return back()->with('error', 'Gagal mengupload bukti pembayaran.');
     }
 
+    /**
+     * Membatalkan pesanan dan mengatur kebijakan pengembalian dana (refund).
+     * Aturan Refund:
+     * - >= 24 Jam sebelum main: Refund 100%
+     * - 12 hingga 24 Jam sebelum main: Refund 50%
+     * - Kurang dari 12 Jam sebelum main: Hangus (Refund 0)
+     * 
+     * @param Request $request
+     * @param Booking $booking Objek pesanan yang akan dibatalkan
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function cancel(Request $request, Booking $booking)
     {
-        if ($booking->user_id !== auth()->id()) abort(403);
-        
+        if ($booking->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         if ($booking->status === 'dibatalkan') {
             return back()->with('error', 'Booking ini sudah dibatalkan sebelumnya.');
         }
 
-        $bookingDateTime = Carbon::parse($booking->booking_date->format('Y-m-d') . ' ' . $booking->start_time->format('H:i:s'));
-        
+        $bookingDateTime = Carbon::parse($booking->booking_date->format('Y-m-d').' '.$booking->start_time->format('H:i:s'));
+
         if ($bookingDateTime->isPast()) {
             return back()->with('error', 'Booking di masa lalu tidak dapat dibatalkan.');
         }
 
         $hoursDifference = now()->diffInHours($bookingDateTime, false);
-        
+
         if ($hoursDifference < 0) {
-             return back()->with('error', 'Booking di masa lalu tidak dapat dibatalkan.');
+            return back()->with('error', 'Booking di masa lalu tidak dapat dibatalkan.');
         }
 
         $refundAmount = 0;
-        
+
         // Only calculate refund if they already paid (assuming they paid full amount as DP/Lunas logic isn't fully detailed on price, but total_price is known)
         // If status is menunggu_pembayaran, there's no money to refund yet.
         if (in_array($booking->status, ['terkonfirmasi'])) {
@@ -203,10 +235,10 @@ class BookingController extends Controller
             'refund_amount' => $refundAmount,
             'cancelled_at' => now(),
         ]);
-        
+
         // Release slots so others can book
         $booking->bookingSlots()->delete();
 
-        return back()->with('success', 'Booking berhasil dibatalkan. Dana yang di-refund: Rp ' . number_format($refundAmount, 0, ',', '.'));
+        return back()->with('success', 'Booking berhasil dibatalkan. Dana yang di-refund: Rp '.number_format($refundAmount, 0, ',', '.'));
     }
 }

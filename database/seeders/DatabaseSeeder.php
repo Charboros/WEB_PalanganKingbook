@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Field;
+use App\Models\FieldType;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -34,12 +36,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Field Types
-        $futsal = \App\Models\FieldType::create(['name' => 'Futsal']);
-        $badminton = \App\Models\FieldType::create(['name' => 'Badminton']);
-        $basket = \App\Models\FieldType::create(['name' => 'Basket']);
+        $futsal = FieldType::create(['name' => 'Futsal']);
+        $badminton = FieldType::create(['name' => 'Badminton']);
+        $basket = FieldType::create(['name' => 'Basket']);
 
         // Fields
-        \App\Models\Field::create([
+        Field::create([
             'field_type_id' => $futsal->id,
             'name' => 'Futsal 1 (Vinyl)',
             'price_offpeak' => 100000,
@@ -48,7 +50,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        \App\Models\Field::create([
+        Field::create([
             'field_type_id' => $futsal->id,
             'name' => 'Futsal 2 (Sintetis)',
             'price_offpeak' => 120000,
@@ -57,7 +59,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        \App\Models\Field::create([
+        Field::create([
             'field_type_id' => $badminton->id,
             'name' => 'Badminton 1',
             'price_offpeak' => 40000,
@@ -66,7 +68,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        \App\Models\Field::create([
+        Field::create([
             'field_type_id' => $basket->id,
             'name' => 'Basket Utama',
             'price_offpeak' => 150000,

@@ -35,6 +35,6 @@ class ReportController extends Controller
             'totalRevenue' => $totalRevenue,
         ]);
 
-        return $pdf->download('laporan-pendapatan-sportbook-' . now()->format('YmdHis') . '.pdf');
+        return $pdf->download('laporan-pendapatan-sportbook-'.now()->format('YmdHis').'.pdf');
     }
 }

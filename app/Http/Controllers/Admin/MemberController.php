@@ -15,10 +15,10 @@ class MemberController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where('member_code', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                });
         }
 
         if ($request->filled('tier')) {

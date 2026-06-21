@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['booking_code', 'user_id', 'field_id', 'booking_date', 'start_time', 'end_time', 'duration_hours', 'original_price', 'discount_amount', 'total_price', 'payment_proof', 'status', 'refund_amount', 'xp_awarded', 'cancelled_at'])]
 class Booking extends Model

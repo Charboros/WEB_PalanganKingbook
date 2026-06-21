@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['field_type_id', 'name', 'price_offpeak', 'price_peak', 'description', 'photo', 'is_active'])]
 class Field extends Model

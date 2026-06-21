@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Member;
-use App\Models\FieldType;
-use App\Models\Field;
 use App\Models\Booking;
+use App\Models\Field;
+use App\Models\FieldType;
+use App\Models\Member;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

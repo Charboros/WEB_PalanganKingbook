@@ -13,12 +13,14 @@ class FieldController extends Controller
     public function index()
     {
         $fields = Field::with('fieldType')->paginate(10);
+
         return view('admin.fields.index', compact('fields'));
     }
 
     public function create()
     {
         $fieldTypes = FieldType::all();
+
         return view('admin.fields.create', compact('fieldTypes'));
     }
 
@@ -42,12 +44,14 @@ class FieldController extends Controller
         }
 
         Field::create($data);
+
         return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil ditambahkan.');
     }
 
     public function edit(Field $field)
     {
         $fieldTypes = FieldType::all();
+
         return view('admin.fields.edit', compact('field', 'fieldTypes'));
     }
 
@@ -74,6 +78,7 @@ class FieldController extends Controller
         }
 
         $field->update($data);
+
         return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil diperbarui.');
     }
 
@@ -82,12 +87,13 @@ class FieldController extends Controller
         if ($field->bookings()->count() > 0) {
             return back()->with('error', 'Tidak dapat menghapus lapangan karena sudah memiliki riwayat booking.');
         }
-        
+
         if ($field->photo) {
             Storage::disk('public')->delete($field->photo);
         }
-        
+
         $field->delete();
+
         return redirect()->route('admin.fields.index')->with('success', 'Lapangan berhasil dihapus.');
     }
 }

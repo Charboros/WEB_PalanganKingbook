@@ -13,7 +13,7 @@ class MembershipController extends Controller
     {
         $user = auth()->user();
         $member = $user->member;
-        
+
         $logs = null;
         if ($member) {
             $logs = $member->xpLogs()->orderBy('created_at', 'desc')->paginate(10);

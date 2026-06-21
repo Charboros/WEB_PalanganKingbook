@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['booking_id', 'field_id', 'slot_date', 'slot_hour', 'price'])]
 class BookingSlot extends Model

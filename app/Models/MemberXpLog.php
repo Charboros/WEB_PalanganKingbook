@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['member_id', 'booking_id', 'xp_amount', 'description'])]
 class MemberXpLog extends Model

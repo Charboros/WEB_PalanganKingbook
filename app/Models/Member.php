@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['user_id', 'member_code', 'level', 'tier', 'xp'])]
 class Member extends Model
@@ -60,7 +60,7 @@ class Member extends Model
     public function recalculateTier(): void
     {
         $oldTier = $this->tier;
-        
+
         if ($this->xp >= 300) {
             $this->tier = 'gold';
             $this->level = 3;

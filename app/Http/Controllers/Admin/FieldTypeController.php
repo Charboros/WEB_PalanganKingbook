@@ -11,6 +11,7 @@ class FieldTypeController extends Controller
     public function index()
     {
         $fieldTypes = FieldType::paginate(10);
+
         return view('admin.field_types.index', compact('fieldTypes'));
     }
 
@@ -23,6 +24,7 @@ class FieldTypeController extends Controller
     {
         $request->validate(['name' => 'required|string|max:50|unique:field_types']);
         FieldType::create($request->all());
+
         return redirect()->route('admin.field-types.index')->with('success', 'Jenis lapangan berhasil ditambahkan.');
     }
 
@@ -33,8 +35,9 @@ class FieldTypeController extends Controller
 
     public function update(Request $request, FieldType $fieldType)
     {
-        $request->validate(['name' => 'required|string|max:50|unique:field_types,name,' . $fieldType->id]);
+        $request->validate(['name' => 'required|string|max:50|unique:field_types,name,'.$fieldType->id]);
         $fieldType->update($request->all());
+
         return redirect()->route('admin.field-types.index')->with('success', 'Jenis lapangan berhasil diperbarui.');
     }
 
@@ -44,6 +47,7 @@ class FieldTypeController extends Controller
             return back()->with('error', 'Tidak dapat menghapus jenis lapangan karena masih memiliki lapangan.');
         }
         $fieldType->delete();
+
         return redirect()->route('admin.field-types.index')->with('success', 'Jenis lapangan berhasil dihapus.');
     }
 }
