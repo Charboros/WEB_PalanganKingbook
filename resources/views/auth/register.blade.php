@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" x-data="{ submitting: false }" @submit="if(submitting) { $event.preventDefault(); return; } submitting = true;">
         @csrf
 
         <!-- Name -->
@@ -44,8 +44,9 @@
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
+            <x-primary-button class="ms-4" x-bind:disabled="submitting" x-bind:class="{ 'opacity-50 cursor-not-allowed': submitting }">
+                <span x-show="!submitting">{{ __('Register') }}</span>
+                <span x-show="submitting" x-cloak>Loading...</span>
             </x-primary-button>
         </div>
     </form>
