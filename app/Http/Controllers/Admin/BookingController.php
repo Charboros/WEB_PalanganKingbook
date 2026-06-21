@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use App\Notifications\BookingStatusUpdated;
 
 class BookingController extends Controller
 {
@@ -54,6 +55,15 @@ class BookingController extends Controller
             elseif (in_array($newStatus, ['dibatalkan', 'refund', 'menunggu_pembayaran']) && $booking->xp_awarded) {
                 $user->member->subtractXP($xpAmount, "Pengurangan XP karena Pembatalan/Perubahan status Booking {$booking->booking_code}", $booking->id);
                 $booking->update(['xp_awarded' => false]);
+            }
+        }
+
+        // Send Notification
+        if (in_array($newStatus, ['terkonfirmasi', 'dibatalkan'])) {
+            $statusText = $newStatus === 'terkonfirmasi' ? 'Terkonfirmasi' : 'Dibatalkan';
+            $message = "Pesanan lapangan Anda dengan kode {$booking->booking_code} telah {$statusText} oleh Admin.";
+            if ($booking->user) {
+                $booking->user->notify(new BookingStatusUpdated($booking, $message));
             }
         }
 

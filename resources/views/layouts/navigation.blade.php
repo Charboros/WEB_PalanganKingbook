@@ -43,6 +43,46 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @auth
+                <!-- Notifications Dropdown -->
+                <x-dropdown align="right" width="64">
+                    <x-slot name="trigger">
+                        <button class="relative inline-flex items-center p-2 mr-3 text-green-200 hover:text-white transition ease-in-out duration-150">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                            @if(auth()->user()->unreadNotifications->count() > 0)
+                                <span class="absolute top-1 right-1 flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                </span>
+                            @endif
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <div class="px-4 py-3 border-b border-gray-100 font-bold text-sm text-gray-700">
+                            Notifikasi Anda
+                        </div>
+                        <div class="max-h-60 overflow-y-auto">
+                            @forelse(auth()->user()->notifications as $notification)
+                                <div class="px-4 py-3 border-b border-gray-50 {{ $notification->read_at ? 'bg-white' : 'bg-green-50' }}">
+                                    <p class="text-sm text-gray-800">{{ $notification->data['message'] ?? 'Ada pembaruan pada pesanan Anda.' }}</p>
+                                    <span class="text-xs text-gray-500 mt-1">{{ $notification->created_at->diffForHumans() }}</span>
+                                </div>
+                            @empty
+                                <div class="px-4 py-3 text-sm text-gray-500 text-center">
+                                    Belum ada notifikasi.
+                                </div>
+                            @endforelse
+                        </div>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <div class="px-4 py-2 border-t border-gray-100 text-center">
+                                @php
+                                    auth()->user()->unreadNotifications->markAsRead();
+                                @endphp
+                                <span class="text-xs text-gray-500">Ditandai sudah dibaca</span>
+                            </div>
+                        @endif
+                    </x-slot>
+                </x-dropdown>
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center gap-2 px-3 py-2 border border-green-600 text-sm leading-4 font-semibold rounded-xl text-white bg-green-800 hover:bg-green-900 focus:outline-none transition ease-in-out duration-150">

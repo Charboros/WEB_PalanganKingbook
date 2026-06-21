@@ -145,7 +145,7 @@ class BookingController extends Controller
         if ($booking->user_id !== auth()->id()) abort(403);
         
         $request->validate([
-            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:500',
         ]);
 
         if ($request->hasFile('payment_proof')) {
